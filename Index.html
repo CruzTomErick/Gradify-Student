@@ -1,39 +1,47 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gradify - Student Grade Management System</title>
-  
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
           colors: {
-            'gradify-navy': '#1B2A4A',
-            'gradify-navy-dark': '#111A30',
-            'gradify-teal': '#0D9488',
-            'gradify-teal-dark': '#0F766E',
-            'gradify-teal-light': '#CCFBF1',
-            'gradify-pass': '#DCFCE7',
-            'gradify-pass-text': '#15803D',
-            'gradify-fail': '#FEE2E2',
-            'gradify-fail-text': '#B91C1C',
+            gradify: {
+              teal: '#0F6278',
+              'teal-dark': '#0B4A5B',
+              'teal-light': '#E6F4F8',
+              navy: '#1C2D42',
+              'navy-dark': '#132030',
+              bg: '#F4F6F8',
+              card: '#FFFFFF',
+              pass: '#DEF7EC',
+              'pass-text': '#03543F',
+              fail: '#FDE8E8',
+              'fail-text': '#9B1C1C',
+            }
           }
         }
       }
     }
   </script>
-
   <style>
-    /* Custom Scrollbar */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F4F6F8;
+      color: #1F2937;
+    }
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -42,187 +50,299 @@
       background: #f1f1f1;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
+      background: #cbd5e1;
       border-radius: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #94A3B8;
+      background: #94a3b8;
     }
   </style>
 </head>
+<body class="antialiased min-h-screen">
 
-<body class="bg-gray-50 text-gray-800 antialiased font-sans">
-  <!-- Main Application Container -->
-  <div id="app"></div>
+  <div id="app" class="min-h-screen"></div>
 
-  <!-- Delete Student Modal -->
-  <div id="deleteStudentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
-      <div class="flex items-start space-x-4">
-        <div class="p-3 bg-rose-100 text-rose-600 rounded-full shrink-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-        </div>
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">Delete Student Record?</h3>
-          <p class="text-sm text-slate-600 mt-1">
-            Are you sure you want to delete <span id="deleteStudentModalName" class="font-semibold text-slate-800"></span>? This action cannot be undone.
-          </p>
-        </div>
-      </div>
-      <div class="mt-6 flex justify-end space-x-3">
-        <button onclick="closeDeleteModal()" class="px-4 py-2 border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 font-medium text-sm transition-colors">
-          Cancel
-        </button>
-        <button onclick="confirmDeleteStudent()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-xl shadow-md transition-colors">
-          Delete Student
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Application Logic -->
+  <!-- Application JavaScript -->
   <script>
-    // Initial Seed Data
+    // --- Initial Mock Data ---
     const INITIAL_STUDENTS = [
       {
-        id: '2026-0001',
-        firstName: 'Liam',
-        lastName: 'Garcia',
-        grade: 'Grade 7',
-        section: '7 · Acacia',
-        rawSection: 'Acacia',
-        dob: '2013-05-14',
-        dobFormatted: 'May 14, 2013',
-        gender: 'Male',
-        status: 'Enrolled',
-        parentName: 'Roberto Garcia',
-        relationship: 'Father',
-        mobile: '09171234567',
-        email: 'r.garcia@gmail.com',
-        address: 'Pasig City, Metro Manila',
-        teacherNotes: 'Consistent high achiever in Math and Science.',
-        grades: { English: 88, Math: 95, Science: 92, Filipino: 90, "Araling Panlipunan": 89, MAPEH: 91 }
+        id: "2026-001",
+        firstName: "Emma Louise",
+        lastName: "Santos",
+        grade: "Grade 7",
+        section: "7 · Acacia",
+        rawSection: "Acacia",
+        dob: "2013-03-14",
+        dobFormatted: "March 14, 2013",
+        gender: "Female",
+        status: "Enrolled",
+        parentName: "Ana Santos",
+        relationship: "Mother",
+        mobile: "0917 555 0101",
+        email: "ana.santos@example.com",
+        address: "24 Mabini Street, Riverside City",
+        teacherNotes: "Guardian prefers academic updates by email.",
+        grades: {
+          English: 88,
+          Math: 90,
+          Science: 86,
+          Filipino: 92,
+          "Araling Panlipunan": 89,
+          MAPEH: 83
+        }
       },
       {
-        id: '2026-0002',
-        firstName: 'Sophia',
-        lastName: 'Santos',
-        grade: 'Grade 7',
-        section: '7 · Acacia',
-        rawSection: 'Acacia',
-        dob: '2013-08-22',
-        dobFormatted: 'August 22, 2013',
-        gender: 'Female',
-        status: 'Enrolled',
-        parentName: 'Elena Santos',
-        relationship: 'Mother',
-        mobile: '09189876543',
-        email: 'e.santos@gmail.com',
-        address: 'Pasig City, Metro Manila',
-        teacherNotes: 'Needs slight encouragement in class discussions.',
-        grades: { English: 85, Math: 80, Science: 82, Filipino: 88, "Araling Panlipunan": 84, MAPEH: 86 }
+        id: "2026-002",
+        firstName: "Noah",
+        lastName: "Reyes",
+        grade: "Grade 7",
+        section: "7 · Acacia",
+        rawSection: "Acacia",
+        dob: "2013-06-10",
+        dobFormatted: "June 10, 2013",
+        gender: "Male",
+        status: "Enrolled",
+        parentName: "Carlos Reyes",
+        relationship: "Father",
+        mobile: "0917 555 0102",
+        email: "carlos.reyes@example.com",
+        address: "Pasig City",
+        teacherNotes: "Needs extra tutoring in Mathematics and MAPEH.",
+        grades: {
+          English: 70,
+          Math: 74,
+          Science: 72,
+          Filipino: 76,
+          "Araling Panlipunan": 73,
+          MAPEH: 67
+        }
       },
       {
-        id: '2026-0003',
-        firstName: 'Juan',
-        lastName: 'Dela Cruz',
-        grade: 'Grade 7',
-        section: '7 · Acacia',
-        rawSection: 'Acacia',
-        dob: '2013-02-10',
-        dobFormatted: 'February 10, 2013',
-        gender: 'Male',
-        status: 'Enrolled',
-        parentName: 'Maria Dela Cruz',
-        relationship: 'Mother',
-        mobile: '09191112233',
-        email: 'mdelacruz@yahoo.com',
-        address: 'Pasig City, Metro Manila',
-        teacherNotes: 'Requires extra support in Math and Science.',
-        grades: { English: 74, Math: 68, Science: 70, Filipino: 76, "Araling Panlipunan": 72, MAPEH: 75 }
+        id: "2026-003",
+        firstName: "Olivia",
+        lastName: "Cruz",
+        grade: "Grade 7",
+        section: "7 · Acacia",
+        rawSection: "Acacia",
+        dob: "2013-08-22",
+        dobFormatted: "August 22, 2013",
+        gender: "Female",
+        status: "Enrolled",
+        parentName: "Roberto Cruz",
+        relationship: "Father",
+        mobile: "0917 555 0103",
+        email: "roberto.cruz@example.com",
+        address: "Pasig City",
+        teacherNotes: "",
+        grades: {
+          English: 85,
+          Math: 82,
+          Science: 84,
+          Filipino: 86,
+          "Araling Panlipunan": 83,
+          MAPEH: 84
+        }
       },
       {
-        id: '2026-0004',
-        firstName: 'Ethan',
-        lastName: 'Flores',
-        grade: 'Grade 7',
-        section: '7 · Narra',
-        rawSection: 'Narra',
-        dob: '2013-11-03',
-        dobFormatted: 'November 3, 2013',
-        gender: 'Male',
-        status: 'Enrolled',
-        parentName: 'Carlos Flores',
-        relationship: 'Father',
-        mobile: '09204445566',
-        email: 'carlos.f@gmail.com',
-        address: 'Pasig City, Metro Manila',
-        teacherNotes: 'Active class participant and student officer.',
-        grades: { English: 90, Math: 88, Science: 94, Filipino: 91, "Araling Panlipunan": 92, MAPEH: 90 }
+        id: "2026-004",
+        firstName: "Liam",
+        lastName: "Garcia",
+        grade: "Grade 7",
+        section: "7 · Acacia",
+        rawSection: "Acacia",
+        dob: "2013-01-15",
+        dobFormatted: "January 15, 2013",
+        gender: "Male",
+        status: "Enrolled",
+        parentName: "Maria Garcia",
+        relationship: "Mother",
+        mobile: "0917 555 0104",
+        email: "maria.garcia@example.com",
+        address: "Pasig City",
+        teacherNotes: "Consistently performs excellently in class activities.",
+        grades: {
+          English: 90,
+          Math: 92,
+          Science: 91,
+          Filipino: 93,
+          "Araling Panlipunan": 89,
+          MAPEH: 91
+        }
+      },
+      {
+        id: "2026-005",
+        firstName: "Sophia",
+        lastName: "Ramos",
+        grade: "Grade 7",
+        section: "7 · Narra",
+        rawSection: "Narra",
+        dob: "2013-04-05",
+        dobFormatted: "April 5, 2013",
+        gender: "Female",
+        status: "Enrolled",
+        parentName: "Elena Ramos",
+        relationship: "Mother",
+        mobile: "0917 555 0105",
+        email: "elena.ramos@example.com",
+        address: "Pasig City",
+        teacherNotes: "",
+        grades: {
+          English: 80,
+          Math: 78,
+          Science: 79,
+          Filipino: 81,
+          "Araling Panlipunan": 78,
+          MAPEH: 78
+        }
+      },
+      {
+        id: "2026-006",
+        firstName: "Lucas",
+        lastName: "Mendoza",
+        grade: "Grade 7",
+        section: "7 · Narra",
+        rawSection: "Narra",
+        dob: "2013-11-12",
+        dobFormatted: "November 12, 2013",
+        gender: "Male",
+        status: "Enrolled",
+        parentName: "David Mendoza",
+        relationship: "Father",
+        mobile: "0917 555 0106",
+        email: "david.mendoza@example.com",
+        address: "Pasig City",
+        teacherNotes: "",
+        grades: {
+          English: 76,
+          Math: 75,
+          Science: 77,
+          Filipino: 78,
+          "Araling Panlipunan": 75,
+          MAPEH: 75
+        }
+      },
+      {
+        id: "2026-007",
+        firstName: "Isabella",
+        lastName: "Torres",
+        grade: "Grade 7",
+        section: "7 · Narra",
+        rawSection: "Narra",
+        dob: "2013-09-30",
+        dobFormatted: "September 30, 2013",
+        gender: "Female",
+        status: "Enrolled",
+        parentName: "Lucia Torres",
+        relationship: "Mother",
+        mobile: "0917 555 0107",
+        email: "lucia.torres@example.com",
+        address: "Pasig City",
+        teacherNotes: "",
+        grades: {
+          English: 86,
+          Math: 84,
+          Science: 85,
+          Filipino: 87,
+          "Araling Panlipunan": 84,
+          MAPEH: 84
+        }
+      },
+      {
+        id: "2026-008",
+        firstName: "Ethan",
+        lastName: "Flores",
+        grade: "Grade 7",
+        section: "7 · Narra",
+        rawSection: "Narra",
+        dob: "2013-02-18",
+        dobFormatted: "February 18, 2013",
+        gender: "Male",
+        status: "Enrolled",
+        parentName: "Grace Flores",
+        relationship: "Mother",
+        mobile: "0917 555 0108",
+        email: "grace.flores@example.com",
+        address: "Pasig City",
+        teacherNotes: "",
+        grades: {
+          English: 92,
+          Math: 90,
+          Science: 91,
+          Filipino: 92,
+          "Araling Panlipunan": 90,
+          MAPEH: 90
+        }
       }
     ];
 
-    // Persisted or default application state
-    let state = {
-      isLoggedIn: true, // Set default logged in for preview
-      activeTab: 'dashboard',
-      selectedStudentId: null,
-      selectedSectionFilter: 'All',
-      statusFilter: 'All',
-      searchQuery: '',
-      toastMessage: null,
-
-      // Login form state
-      loginEmail: 'maria.cruz@asiasource.edu.ph',
-      loginPassword: 'password123',
-      loginErrors: {},
-
-      // Teacher Profile
-      teacherProfile: {
-        name: 'Maria D. Cruz',
-        title: 'Grade 7 Adviser & Faculty Member',
-        facultyId: 'FAC-2024-089',
-        email: 'maria.cruz@asiasource.edu.ph',
-        phone: '0917-555-0192',
-        emailNotifications: true,
-        autoCalculateAverage: true
-      },
-
-      // Student Data
+    // --- State Management ---
+    const state = {
+      isLoggedIn: true,
+      activeTab: 'dashboard', // dashboard, students, grades, reports, profile
       students: JSON.parse(localStorage.getItem('gradify_students')) || INITIAL_STUDENTS,
-
-      // Modal & Form States
+      selectedStudentId: null,
+      selectedSectionFilter: 'All', // 'All', '7 Acacia', '7 Narra'
+      searchQuery: '',
+      statusFilter: 'All', // 'All', 'Passed', 'Failed'
+      
+      // Modals and Sub-views
       showAddStudentModal: false,
       showEditStudentModal: false,
       showDiscardChangesModal: false,
       showLogoutModal: false,
       showPrintReportModal: false,
+      toastMessage: null,
+      
+      // Edit Student Form State
+      editForm: {},
       isEditFormDirty: false,
+      
+      // Add Student Form State
+      addForm: {
+        firstName: '',
+        lastName: '',
+        studentId: '',
+        section: '7 · Acacia',
+        dob: '',
+        gender: 'Female',
+        parentName: '',
+        relationship: 'Mother',
+        mobile: '',
+        email: '',
+        address: '',
+        teacherNotes: ''
+      },
 
       // Grade Editor State
-      gradeEditorStep: 1,
+      gradeEditorStep: 1, // 1: Select Student, 2: Input Grades, 3: Success
+      gradeEditorStudentId: '2026-001',
       gradeEditorSection: '7 · Acacia',
-      gradeEditorStudentId: '2026-0001',
       gradeEditorTempGrades: {},
 
-      // Forms data
-      addForm: {
-        firstName: '', lastName: '', section: '7 · Acacia', dob: '', gender: 'Female',
-        parentName: '', relationship: 'Mother', mobile: '', email: '', address: '', teacherNotes: ''
+      // Teacher Profile State
+      teacherProfile: {
+        name: "Maria D. Cruz",
+        email: "maria.cruz@riverside.edu.ph",
+        facultyId: "RJHS-T-014",
+        title: "Grade 7 teacher",
+        phone: "+63 917 123 4567",
+        emailNotifications: true,
+        autoCalculateAverage: true
       },
-      editForm: {}
+
+      // Login Screen Form
+      loginEmail: 'maria.cruz@riverside.edu.ph',
+      loginPassword: '••••••••••••',
+      loginErrors: {}
     };
 
-    let selectedStudentForDelete = null;
-
+    // Save to LocalStorage
     function persistData() {
       localStorage.setItem('gradify_students', JSON.stringify(state.students));
     }
 
-    function calculateAverage(grades) {
-      return calcAverage(grades);
-    }
-
+    // Helper: Compute average grade for a student
     function calcAverage(grades) {
       if (!grades) return "0.00";
       const keys = Object.keys(grades);
@@ -231,10 +351,12 @@
       return (sum / keys.length).toFixed(2);
     }
 
+    // Helper: Check passing status (Threshold 75)
     function isPassing(average) {
       return parseFloat(average) >= 75.00;
     }
 
+    // Helper: Show Toast Notification
     function showToast(msg) {
       state.toastMessage = msg;
       render();
@@ -244,6 +366,7 @@
       }, 3500);
     }
 
+    // --- Action Handlers ---
     function setTab(tab, studentId = null) {
       state.activeTab = tab;
       if (studentId) {
@@ -261,32 +384,6 @@
           }
         }
       }
-      render();
-    }
-
-    function promptDeleteStudent(studentId) {
-      const student = state.students.find(s => s.id === studentId);
-      if (!student) return;
-      
-      selectedStudentForDelete = student;
-      document.getElementById('deleteStudentModalName').textContent = `${student.firstName} ${student.lastName} (ID: ${student.id})`;
-      document.getElementById('deleteStudentModal').classList.remove('hidden');
-    }
-
-    function closeDeleteModal() {
-      selectedStudentForDelete = null;
-      document.getElementById('deleteStudentModal').classList.add('hidden');
-    }
-
-    function confirmDeleteStudent() {
-      if (!selectedStudentForDelete) return;
-
-      const deletedName = `${selectedStudentForDelete.firstName} ${selectedStudentForDelete.lastName}`;
-      state.students = state.students.filter(s => s.id !== selectedStudentForDelete.id);
-      persistData();
-
-      closeDeleteModal();
-      showToast(`Student ${deletedName} deleted successfully`);
       render();
     }
 
@@ -312,6 +409,7 @@
       e.preventDefault();
       const idx = state.students.findIndex(s => s.id === state.editForm.id);
       if (idx !== -1) {
+        // Format raw section label
         state.editForm.rawSection = state.editForm.section.includes('Acacia') ? 'Acacia' : 'Narra';
         state.students[idx] = { ...state.editForm };
         persistData();
@@ -324,7 +422,7 @@
 
     function handleAddStudentSubmit(e) {
       e.preventDefault();
-      const newId = `2026-000${state.students.length + 1}`;
+      const newId = `2026-00${state.students.length + 1}`;
       const rawSec = state.addForm.section.includes('Acacia') ? 'Acacia' : 'Narra';
       
       const newStudent = {
@@ -358,8 +456,9 @@
       persistData();
       state.showAddStudentModal = false;
       showToast(`Student ${newStudent.firstName} ${newStudent.lastName} registered successfully!`);
+      // Reset form
       state.addForm = {
-        firstName: '', lastName: '', section: '7 · Acacia', dob: '',
+        firstName: '', lastName: '', studentId: '', section: '7 · Acacia', dob: '',
         gender: 'Female', parentName: '', relationship: 'Mother', mobile: '', email: '', address: '', teacherNotes: ''
       };
       render();
@@ -400,7 +499,8 @@
       render();
     }
 
-    // Components
+    // --- UI Render Components ---
+
     function renderSidebar() {
       const links = [
         { id: 'dashboard', label: 'Dashboard', icon: 'fa-table-cells-large' },
@@ -413,6 +513,7 @@
       return `
         <aside class="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col justify-between p-4 flex-shrink-0">
           <div>
+            <!-- Brand Header -->
             <div class="flex items-center space-x-3 mb-6 px-2">
               <div class="w-10 h-10 bg-gradify-navy rounded-xl flex items-center justify-center text-white shadow-md">
                 <i class="fa-solid fa-graduation-cap text-xl"></i>
@@ -423,12 +524,14 @@
               </div>
             </div>
 
+            <!-- School Branch -->
             <div class="px-2 mb-6">
               <p class="text-xs font-semibold text-gray-800 leading-snug">
                 Asia Source iCollege – Pasig City Branch
               </p>
             </div>
 
+            <!-- Navigation Links -->
             <nav class="space-y-1">
               ${links.map(link => {
                 const isActive = state.activeTab === link.id;
@@ -460,13 +563,16 @@
             </nav>
           </div>
 
+          <!-- Bottom Meta & User Profile -->
           <div class="space-y-4">
+            <!-- Academic Period Box -->
             <div class="bg-gray-50 rounded-xl p-3.5 border border-gray-100">
               <p class="text-[11px] font-bold tracking-wider text-gray-400 uppercase">Academic Period</p>
               <p class="text-sm font-bold text-gray-800 mt-0.5">2026–2027 · Quarter 1</p>
               <p class="text-xs text-gray-500 mt-1">Passing threshold: <span class="font-semibold text-gray-700">75</span></p>
             </div>
 
+            <!-- Profile Info -->
             <div class="flex items-center space-x-3 pt-2 px-1">
               <div class="w-9 h-9 rounded-full bg-gradify-teal-light text-gradify-teal font-bold flex items-center justify-center text-xs border border-teal-200">
                 MC
@@ -481,8 +587,11 @@
       `;
     }
 
+    // --- DASHBOARD VIEW ---
     function renderDashboard() {
       const totalStudents = state.students.length;
+      
+      // Calculate Overall Stats
       let totalAvgSum = 0;
       let passingCount = 0;
       let failingCount = 0;
@@ -509,11 +618,12 @@
         else failingCount++;
       });
 
-      const genAverage = totalStudents ? (totalAvgSum / totalStudents).toFixed(2) : '0.00';
-      const passPercentage = totalStudents ? ((passingCount / totalStudents) * 100).toFixed(1) : '0.0';
+      const genAverage = (totalAvgSum / totalStudents).toFixed(2);
+      const passPercentage = ((passingCount / totalStudents) * 100).toFixed(1);
 
       return `
         <div class="p-8 max-w-7xl mx-auto space-y-8">
+          <!-- Page Header -->
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 class="text-3xl font-bold text-gray-900">Good day, Maria</h1>
@@ -528,7 +638,9 @@
             </button>
           </div>
 
+          <!-- Top Metric Cards -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Card 1 -->
             <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-start justify-between">
               <div>
                 <span class="text-3xl font-extrabold text-gray-900">${totalStudents}</span>
@@ -540,6 +652,7 @@
               </div>
             </div>
 
+            <!-- Card 2 -->
             <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-start justify-between">
               <div>
                 <span class="text-3xl font-extrabold text-gray-900">${genAverage}</span>
@@ -551,10 +664,11 @@
               </div>
             </div>
 
+            <!-- Card 3 -->
             <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-start justify-between">
               <div>
                 <span class="text-3xl font-extrabold text-gray-900">${passingCount} / ${totalStudents}</span>
-                <p class="text-xs font-semibold text-gray-500 mt-1">Passing students</p>
+                <p class="text-xs font-semibold text-gray-500 mt-1">Passing student</p>
                 <p class="text-[11px] text-gray-400 mt-0.5">${passPercentage}% · threshold 75</p>
               </div>
               <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -562,6 +676,7 @@
               </div>
             </div>
 
+            <!-- Card 4 -->
             <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-start justify-between">
               <div>
                 <span class="text-3xl font-extrabold text-gray-900">${failingCount}</span>
@@ -574,7 +689,9 @@
             </div>
           </div>
 
+          <!-- Section Breakdown & Performance Row -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Your Sections Table -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between mb-2">
@@ -614,11 +731,13 @@
               </div>
             </div>
 
+            <!-- Quarter Performance Bar -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col justify-between">
               <div>
                 <h2 class="text-base font-bold text-gray-900 mb-1">Quarter performance</h2>
                 <p class="text-xs text-gray-500 mb-6">General average distribution</p>
 
+                <!-- Progress bar -->
                 <div class="w-full bg-red-400 rounded-full h-3.5 flex overflow-hidden mb-6">
                   <div class="bg-gradify-teal h-full" style="width: ${passPercentage}%"></div>
                   <div class="bg-rose-500 h-full" style="width: ${100 - passPercentage}%"></div>
@@ -637,7 +756,7 @@
                       <span class="w-3 h-3 bg-rose-500 rounded-sm"></span>
                       <span class="font-semibold text-gray-700">Failing</span>
                     </div>
-                    <span class="font-bold text-gray-900">${failingCount} students · ${(100 - passPercentage).toFixed(1)}%</span>
+                    <span class="font-bold text-gray-900">${failingCount} student · ${(100 - passPercentage).toFixed(1)}%</span>
                   </div>
                 </div>
               </div>
@@ -648,10 +767,11 @@
             </div>
           </div>
 
+          <!-- Student Snapshot Table -->
           <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-900">Student snapshot</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Recently reviewed academic records</p>
+              <p class="text-xs text-gray-500 mt-0.5">Recently reviewed academic records · October 5, 2026</p>
             </div>
 
             <div class="overflow-x-auto">
@@ -666,7 +786,7 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 font-medium text-gray-700">
-                  ${state.students.slice(0, 5).map(s => {
+                  ${state.students.slice(0, 4).map(s => {
                     const avg = calcAverage(s.grades);
                     const pass = isPassing(avg);
                     return `
@@ -701,22 +821,28 @@
       `;
     }
 
+    // --- STUDENTS MANAGEMENT VIEW ---
     function renderStudents() {
+      // If a student ID is selected, show details page
       if (state.selectedStudentId) {
         return renderStudentDetail(state.selectedStudentId);
       }
 
+      // Filter Students List
       let filtered = state.students.filter(s => {
+        // Filter by section
         if (state.selectedSectionFilter !== 'All') {
           if (state.selectedSectionFilter === '7 Acacia' && !s.section.includes('Acacia')) return false;
           if (state.selectedSectionFilter === '7 Narra' && !s.section.includes('Narra')) return false;
         }
 
+        // Filter by status
         const avg = calcAverage(s.grades);
         const pass = isPassing(avg);
         if (state.statusFilter === 'Passed' && !pass) return false;
         if (state.statusFilter === 'Failed' && pass) return false;
 
+        // Search Query
         if (state.searchQuery.trim()) {
           const q = state.searchQuery.toLowerCase().trim();
           const fullName = `${s.firstName} ${s.lastName}`.toLowerCase();
@@ -729,6 +855,7 @@
 
       return `
         <div class="p-8 max-w-7xl mx-auto space-y-6">
+          <!-- Page Title Header -->
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 class="text-3xl font-bold text-gray-900">Students</h1>
@@ -743,10 +870,12 @@
             </button>
           </div>
 
+          <!-- Filter Toolbar -->
           <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
             <h2 class="text-base font-bold text-gray-900">Registered Students</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Filter: Section -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Section</label>
                 <select 
@@ -759,6 +888,7 @@
                 </select>
               </div>
 
+              <!-- Search Bar -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Search students</label>
                 <div class="relative">
@@ -777,6 +907,7 @@
                 </div>
               </div>
 
+              <!-- Filter: Academic Status -->
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Academic status</label>
                 <select 
@@ -790,6 +921,7 @@
               </div>
             </div>
 
+            <!-- Student Table / Empty State -->
             <div class="pt-2">
               ${filtered.length > 0 ? `
                 <div class="overflow-x-auto">
@@ -801,7 +933,7 @@
                         <th class="py-3 px-3">Section</th>
                         <th class="py-3 px-3">Average</th>
                         <th class="py-3 px-3">Status</th>
-                        <th class="py-3 px-3 text-right">Actions</th>
+                        <th class="py-3 px-3 text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 font-medium text-gray-700">
@@ -824,19 +956,12 @@
                                 ${pass ? 'Passing' : 'Failing'}
                               </span>
                             </td>
-                            <td class="py-3.5 px-3 text-right space-x-2">
+                            <td class="py-3.5 px-3 text-right">
                               <button 
                                 onclick="state.selectedStudentId = '${s.id}'; render();" 
                                 class="border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-3 py-1.5 rounded-lg text-xs transition-colors bg-white shadow-sm"
                               >
-                                View
-                              </button>
-                              <button 
-                                onclick="promptDeleteStudent('${s.id}')" 
-                                class="text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-lg transition-colors font-medium text-xs inline-flex items-center"
-                                title="Delete Record"
-                              >
-                                <i class="fa-solid fa-trash-can"></i>
+                                View Student
                               </button>
                             </td>
                           </tr>
@@ -846,16 +971,17 @@
                   </table>
                 </div>
               ` : `
+                <!-- Desktop - 17.png Empty Search State -->
                 <div class="border border-gray-200 rounded-xl p-12 text-center my-4 bg-gray-50/50">
                   <h3 class="text-base font-bold text-gray-800">No matching student records</h3>
                   <p class="text-xs text-gray-500 max-w-md mx-auto mt-1 leading-relaxed">
-                    No records match "${state.searchQuery || state.statusFilter}" in selected sections.
+                    No records match "${state.searchQuery || state.statusFilter}" in selected sections. Try a student name or school-issued ID.
                   </p>
                   <button 
                     onclick="state.searchQuery = ''; state.statusFilter = 'All'; state.selectedSectionFilter = 'All'; render();"
                     class="mt-4 px-4 py-2 bg-gradify-teal text-white rounded-lg text-xs font-semibold hover:bg-gradify-teal-dark transition-colors shadow-sm"
                   >
-                    Clear filters
+                    Clear search
                   </button>
                 </div>
               `}
@@ -865,6 +991,7 @@
       `;
     }
 
+    // --- STUDENT DETAIL VIEW ---
     function renderStudentDetail(studentId) {
       const student = state.students.find(s => s.id === studentId);
       if (!student) {
@@ -877,6 +1004,7 @@
 
       return `
         <div class="p-8 max-w-7xl mx-auto space-y-6">
+          <!-- Back Link Header -->
           <div>
             <button 
               onclick="state.selectedStudentId = null; render();" 
@@ -914,21 +1042,16 @@
                   <i class="fa-solid fa-pen-to-square text-xs"></i>
                   <span>Edit Grades</span>
                 </button>
-
-                <button 
-                  onclick="promptDeleteStudent('${student.id}')"
-                  class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold rounded-lg text-xs transition-colors border border-rose-200"
-                  title="Delete Student"
-                >
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>
               </div>
             </div>
           </div>
 
+          <!-- Grid: Personal & Guardian Info -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Personal Info Card -->
             <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
               <h2 class="text-base font-bold text-gray-900 pb-2 border-b border-gray-100">Personal Information</h2>
+              
               <div class="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <p class="text-gray-400 font-medium">Full Name</p>
@@ -953,8 +1076,10 @@
               </div>
             </div>
 
+            <!-- Guardian & Contact Info Card -->
             <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
               <h2 class="text-base font-bold text-gray-900 pb-2 border-b border-gray-100">Guardian & Contact Information</h2>
+              
               <div class="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <p class="text-gray-400 font-medium">Parent / Guardian</p>
@@ -980,6 +1105,7 @@
             </div>
           </div>
 
+          <!-- Academic Performance Breakdown -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
             <div class="flex items-center justify-between pb-2 border-b border-gray-100">
               <div>
@@ -1030,31 +1156,37 @@
       `;
     }
 
+    // --- GRADES / GRADE EDITOR VIEW ---
     function renderGrades() {
       const selectedStudent = state.students.find(s => s.id === state.gradeEditorStudentId) || state.students[0];
 
+      // Sync section list
       const sectionStudents = state.students.filter(s => {
         if (state.gradeEditorSection === '7 · Acacia') return s.section.includes('Acacia');
         if (state.gradeEditorSection === '7 · Narra') return s.section.includes('Narra');
         return true;
       });
 
+      // Prepare temp grades object if not set
       if (!state.gradeEditorTempGrades || Object.keys(state.gradeEditorTempGrades).length === 0) {
-        state.gradeEditorTempGrades = selectedStudent ? { ...selectedStudent.grades } : {};
+        state.gradeEditorTempGrades = { ...selectedStudent.grades };
       }
 
       const tempAvg = calcAverage(state.gradeEditorTempGrades);
       const tempPass = isPassing(tempAvg);
 
+      // Identify low performing subjects (< 75)
       const lowSubjects = Object.entries(state.gradeEditorTempGrades).filter(([_, score]) => Number(score) < 75);
 
       return `
         <div class="p-8 max-w-5xl mx-auto space-y-6">
+          <!-- Page Title -->
           <div>
             <h1 class="text-3xl font-bold text-gray-900">Grade Management</h1>
             <p class="text-gray-500 text-sm mt-1">Input and manage Quarter 1 subject scores for students.</p>
           </div>
 
+          <!-- Wizard Step Indicator -->
           <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-around text-xs font-bold">
             <div class="flex items-center space-x-2 ${state.gradeEditorStep >= 1 ? 'text-gradify-teal' : 'text-gray-400'}">
               <span class="w-6 h-6 rounded-full border-2 border-current flex items-center justify-center text-xs">1</span>
@@ -1072,6 +1204,7 @@
             </div>
           </div>
 
+          <!-- Step 1: Selector Bar -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
             <h2 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Step 1: Choose Section & Student</h2>
             
@@ -1108,7 +1241,7 @@
                   class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gradify-teal focus:border-gradify-teal outline-none bg-white"
                 >
                   ${sectionStudents.map(s => `
-                    <option value="${s.id}" ${s.id === (selectedStudent ? selectedStudent.id : '') ? 'selected' : ''}>
+                    <option value="${s.id}" ${s.id === selectedStudent.id ? 'selected' : ''}>
                       ${s.firstName} ${s.lastName} (${s.id})
                     </option>
                   `).join('')}
@@ -1117,91 +1250,96 @@
             </div>
           </div>
 
-          ${selectedStudent ? `
-            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-2">
-                <div>
-                  <h2 class="text-lg font-bold text-gray-900">${selectedStudent.firstName} ${selectedStudent.lastName}</h2>
-                  <p class="text-xs text-gray-500">Student ID: ${selectedStudent.id} · ${selectedStudent.section}</p>
-                </div>
-                <div class="text-left sm:text-right">
-                  <span class="text-3xl font-black text-gray-900">${tempAvg}</span>
-                  <div class="mt-0.5">
-                    <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                      tempPass ? 'bg-gradify-pass text-gradify-pass-text' : 'bg-gradify-fail text-gradify-fail-text'
-                    }">
-                      ${tempPass ? 'Passing' : 'Failing'}
-                    </span>
-                  </div>
-                </div>
+          <!-- Step 2: Subject Grades Form -->
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-2">
+              <div>
+                <h2 class="text-lg font-bold text-gray-900">${selectedStudent.firstName} ${selectedStudent.lastName}</h2>
+                <p class="text-xs text-gray-500">Student ID: ${selectedStudent.id} · ${selectedStudent.section}</p>
               </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                ${Object.entries(state.gradeEditorTempGrades).map(([subject, val]) => {
-                  const isFail = Number(val) < 75;
-                  return `
-                    <div class="p-3.5 border rounded-xl transition-all ${isFail ? 'border-rose-300 bg-rose-50/30' : 'border-gray-200 bg-gray-50/50'}">
-                      <label class="block text-xs font-bold text-gray-800 mb-1.5">${subject}</label>
-                      <div class="relative">
-                        <input 
-                          type="number" 
-                          min="0" 
-                          max="100"
-                          value="${val}"
-                          oninput="
-                            state.gradeEditorTempGrades['${subject}'] = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
-                            render();
-                          "
-                          class="w-full text-base font-bold text-gray-900 border ${isFail ? 'border-rose-400 focus:ring-rose-400' : 'border-gray-300 focus:ring-gradify-teal'} rounded-lg px-3 py-1.5 outline-none bg-white"
-                        />
-                        <span class="absolute right-3 top-2.5 text-xs text-gray-400 font-semibold">%</span>
-                      </div>
-                      ${isFail ? `<p class="text-[10px] text-rose-600 font-semibold mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Below threshold (75)</p>` : ''}
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-
-              ${lowSubjects.length > 0 ? `
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start space-x-3 text-amber-900 text-xs">
-                  <i class="fa-solid fa-circle-exclamation text-amber-600 text-base mt-0.5"></i>
-                  <div>
-                    <p class="font-bold">Academic Support Needed</p>
-                    <p class="mt-0.5 text-amber-800 leading-relaxed">
-                      This student is scoring below 75 in: <span class="font-bold">${lowSubjects.map(s => s[0]).join(', ')}</span>.
-                    </p>
-                  </div>
+              <div class="text-left sm:text-right">
+                <span class="text-3xl font-black text-gray-900">${tempAvg}</span>
+                <div class="mt-0.5">
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    tempPass ? 'bg-gradify-pass text-gradify-pass-text' : 'bg-gradify-fail text-gradify-fail-text'
+                  }">
+                    ${tempPass ? 'Passing' : 'Failing'}
+                  </span>
                 </div>
-              ` : ''}
-
-              <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
-                <button 
-                  onclick="
-                    state.gradeEditorTempGrades = {...selectedStudent.grades};
-                    showToast('Reverted modifications.');
-                    render();
-                  "
-                  class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg text-xs transition-colors"
-                >
-                  Reset Changes
-                </button>
-                <button 
-                  onclick="handleSaveGrades()"
-                  class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs transition-colors shadow-sm inline-flex items-center gap-2"
-                >
-                  <i class="fa-solid fa-check text-xs"></i>
-                  <span>Save Grades & Calculate</span>
-                </button>
               </div>
             </div>
-          ` : ''}
+
+            <!-- Grade Inputs Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              ${Object.entries(state.gradeEditorTempGrades).map(([subject, val]) => {
+                const isFail = Number(val) < 75;
+                return `
+                  <div class="p-3.5 border rounded-xl transition-all ${isFail ? 'border-rose-300 bg-rose-50/30' : 'border-gray-200 bg-gray-50/50'}">
+                    <label class="block text-xs font-bold text-gray-800 mb-1.5">${subject}</label>
+                    <div class="relative">
+                      <input 
+                        type="number" 
+                        min="0" 
+                        max="100"
+                        value="${val}"
+                        oninput="
+                          state.gradeEditorTempGrades['${subject}'] = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
+                          render();
+                        "
+                        class="w-full text-base font-bold text-gray-900 border ${isFail ? 'border-rose-400 focus:ring-rose-400' : 'border-gray-300 focus:ring-gradify-teal'} rounded-lg px-3 py-1.5 outline-none bg-white"
+                      />
+                      <span class="absolute right-3 top-2.5 text-xs text-gray-400 font-semibold">%</span>
+                    </div>
+                    ${isFail ? `<p class="text-[10px] text-rose-600 font-semibold mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Below threshold (75)</p>` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Academic Support Priority Warning -->
+            ${lowSubjects.length > 0 ? `
+              <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start space-x-3 text-amber-900 text-xs">
+                <i class="fa-solid fa-circle-exclamation text-amber-600 text-base mt-0.5"></i>
+                <div>
+                  <p class="font-bold">Academic Support Needed</p>
+                  <p class="mt-0.5 text-amber-800 leading-relaxed">
+                    This student is scoring below 75 in: <span class="font-bold">${lowSubjects.map(s => s[0]).join(', ')}</span>.
+                    Remedial sessions or parent consultation is recommended.
+                  </p>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
+              <button 
+                onclick="
+                  state.gradeEditorTempGrades = {...selectedStudent.grades};
+                  showToast('Reverted modifications.');
+                  render();
+                "
+                class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg text-xs transition-colors"
+              >
+                Reset Changes
+              </button>
+              <button 
+                onclick="handleSaveGrades()"
+                class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs transition-colors shadow-sm inline-flex items-center gap-2"
+              >
+                <i class="fa-solid fa-check text-xs"></i>
+                <span>Save Grades & Calculate</span>
+              </button>
+            </div>
+          </div>
         </div>
       `;
     }
 
+    // --- REPORTS VIEW ---
     function renderReports() {
       return `
         <div class="p-8 max-w-7xl mx-auto space-y-6">
+          <!-- Header -->
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 class="text-3xl font-bold text-gray-900">Academic Reports</h1>
@@ -1225,6 +1363,64 @@
             </div>
           </div>
 
+          <!-- Section Summaries Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Acacia Card -->
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div>
+                  <h2 class="text-lg font-bold text-gray-900">Section 7 · Acacia</h2>
+                  <p class="text-xs text-gray-500">Adviser: Maria D. Cruz</p>
+                </div>
+                <span class="px-3 py-1 bg-teal-50 text-gradify-teal font-bold rounded-full text-xs">
+                  4 Students
+                </span>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-gray-50">
+                  <span class="text-gray-500">Section Average</span>
+                  <span class="font-bold text-gray-900">83.75</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-50">
+                  <span class="text-gray-500">Passing Rate</span>
+                  <span class="font-bold text-emerald-600">75% (3/4)</span>
+                </div>
+                <div class="flex justify-between py-1">
+                  <span class="text-gray-500">Highest Rank Student</span>
+                  <span class="font-bold text-gray-900">Liam Garcia (91.00)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Narra Card -->
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div>
+                  <h2 class="text-lg font-bold text-gray-900">Section 7 · Narra</h2>
+                  <p class="text-xs text-gray-500">Adviser: Maria D. Cruz</p>
+                </div>
+                <span class="px-3 py-1 bg-teal-50 text-gradify-teal font-bold rounded-full text-xs">
+                  4 Students
+                </span>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-gray-50">
+                  <span class="text-gray-500">Section Average</span>
+                  <span class="font-bold text-gray-900">80.25</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-50">
+                  <span class="text-gray-500">Passing Rate</span>
+                  <span class="font-bold text-emerald-600">100% (4/4)</span>
+                </div>
+                <div class="flex justify-between py-1">
+                  <span class="text-gray-500">Highest Rank Student</span>
+                  <span class="font-bold text-gray-900">Ethan Flores (91.00)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- All Student Academic Report List Table -->
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
             <h2 class="text-base font-bold text-gray-900">Quarter 1 Complete Roster Report</h2>
             
@@ -1279,6 +1475,7 @@
       `;
     }
 
+    // --- PROFILE VIEW ---
     function renderProfile() {
       const p = state.teacherProfile;
       return `
@@ -1289,6 +1486,7 @@
           </div>
 
           <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+            <!-- Header Info -->
             <div class="flex items-center space-x-4 pb-6 border-b border-gray-100">
               <div class="w-16 h-16 rounded-full bg-gradify-teal-light text-gradify-teal font-extrabold flex items-center justify-center text-xl border-2 border-teal-200">
                 MC
@@ -1296,9 +1494,14 @@
               <div>
                 <h2 class="text-xl font-bold text-gray-900">${p.name}</h2>
                 <p class="text-xs text-gray-500">${p.title} · Faculty ID: <span class="font-mono text-gray-700">${p.facultyId}</span></p>
+                <div class="flex items-center space-x-2 mt-2">
+                  <span class="px-2 py-0.5 bg-teal-50 text-gradify-teal text-[11px] font-bold rounded">Section 7 - Acacia</span>
+                  <span class="px-2 py-0.5 bg-teal-50 text-gradify-teal text-[11px] font-bold rounded">Section 7 - Narra</span>
+                </div>
               </div>
             </div>
 
+            <!-- Profile Form -->
             <form onsubmit="event.preventDefault(); showToast('Profile settings saved successfully.');" class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div>
@@ -1319,6 +1522,21 @@
                 </div>
               </div>
 
+              <!-- Preferences -->
+              <div class="pt-4 border-t border-gray-100 space-y-3">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider">System Preferences</h3>
+                
+                <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer">
+                  <span class="text-xs font-medium text-gray-700">Send email alerts for failing student averages</span>
+                  <input type="checkbox" ${p.emailNotifications ? 'checked' : ''} onchange="state.teacherProfile.emailNotifications = this.checked" class="w-4 h-4 text-gradify-teal rounded focus:ring-gradify-teal">
+                </label>
+
+                <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer">
+                  <span class="text-xs font-medium text-gray-700">Auto-calculate general average on grade input</span>
+                  <input type="checkbox" ${p.autoCalculateAverage ? 'checked' : ''} onchange="state.teacherProfile.autoCalculateAverage = this.checked" class="w-4 h-4 text-gradify-teal rounded focus:ring-gradify-teal">
+                </label>
+              </div>
+
               <div class="pt-4 text-right">
                 <button type="submit" class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs transition-colors shadow-sm">
                   Save Profile Changes
@@ -1330,13 +1548,16 @@
       `;
     }
 
+    // --- LOGIN SCREEN (Desktop - 5.png, 6.png, 7.png) ---
     function renderLogin() {
       const err = state.loginErrors;
 
       return `
         <div class="min-h-screen flex flex-col md:flex-row bg-white">
+          <!-- Left Dark Navy Section -->
           <div class="md:w-1/2 bg-gradify-navy p-12 flex flex-col justify-center items-center text-center text-white relative min-h-[400px]">
             <div class="max-w-md space-y-6">
+              <!-- Logo Graphic -->
               <div class="w-32 h-32 mx-auto rounded-full border-4 border-teal-500/30 flex items-center justify-center bg-gradify-navy-dark shadow-2xl relative">
                 <i class="fa-solid fa-graduation-cap text-6xl text-amber-500"></i>
               </div>
@@ -1348,6 +1569,7 @@
             </div>
           </div>
 
+          <!-- Right Login Form Section -->
           <div class="md:w-1/2 p-8 md:p-16 flex flex-col justify-center max-w-lg mx-auto w-full">
             <div class="space-y-6">
               <div>
@@ -1378,6 +1600,10 @@
                     class="w-full text-sm border ${err.password ? 'border-rose-500' : 'border-gray-300'} rounded-lg px-3.5 py-2.5 outline-none focus:ring-2 focus:ring-gradify-teal"
                   />
                   ${err.password ? `<p class="text-xs text-rose-500 mt-1 font-medium">${err.password}</p>` : ''}
+                  
+                  <div class="text-right mt-1.5">
+                    <a href="#" onclick="alert('Password reset link sent to registered email.'); return false;" class="text-xs text-gradify-teal font-semibold hover:underline">Forgot password?</a>
+                  </div>
                 </div>
 
                 <button 
@@ -1393,6 +1619,9 @@
       `;
     }
 
+    // --- MODALS & DIALOGS ---
+
+    // Edit Student Modal (Edit student.png)
     function renderEditStudentModal() {
       if (!state.showEditStudentModal) return '';
       const f = state.editForm;
@@ -1400,34 +1629,196 @@
       return `
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div class="bg-white rounded-2xl border border-gray-200 shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar p-8 space-y-6">
+            <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-gray-100">
               <div>
+                <button 
+                  type="button" 
+                  onclick="closeEditStudentModal(true)" 
+                  class="text-xs font-semibold text-gray-500 hover:text-gray-900 inline-flex items-center gap-1 mb-1"
+                >
+                  <i class="fa-solid fa-arrow-left text-[10px]"></i> Back · Student Details
+                </button>
                 <h2 class="text-2xl font-bold text-gray-900">Edit student</h2>
-                <p class="text-xs text-gray-500">Update ${f.firstName} ${f.lastName}’s details.</p>
+                <p class="text-xs text-gray-500">Update ${f.firstName} ${f.lastName}’s information. Grade records will not be changed.</p>
               </div>
               <button onclick="closeEditStudentModal(true)" class="text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-lg"></i>
               </button>
             </div>
 
+            <!-- Form -->
             <form onsubmit="saveStudentEdits(event)" class="space-y-6">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
-                <div>
-                  <label class="block font-semibold text-gray-700 mb-1">First name *</label>
-                  <input type="text" required value="${f.firstName}" oninput="state.editForm.firstName = this.value; state.isEditFormDirty = true;" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Personal Info Panel -->
+                <div class="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
+                  <h3 class="text-sm font-bold text-gray-900 border-b border-gray-200 pb-2">Personal information</h3>
+                  <p class="text-[11px] text-gray-400">Fields marked * are required.</p>
+
+                  <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">First name *</label>
+                      <input 
+                        type="text" 
+                        required 
+                        value="${f.firstName}" 
+                        oninput="state.editForm.firstName = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Last name *</label>
+                      <input 
+                        type="text" 
+                        required 
+                        value="${f.lastName}" 
+                        oninput="state.editForm.lastName = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+
+                    <div class="col-span-2">
+                      <label class="block font-semibold text-gray-700 mb-1">Student ID *</label>
+                      <input 
+                        type="text" 
+                        readonly 
+                        value="${f.id}" 
+                        class="w-full border border-gray-200 bg-gray-100 text-gray-500 rounded-lg px-3 py-2 outline-none cursor-not-allowed"
+                      />
+                      <p class="text-[10px] text-gray-400 mt-1">School-issued ID. Contact the registrar to change.</p>
+                    </div>
+
+                    <div class="col-span-2">
+                      <label class="block font-semibold text-gray-700 mb-1">Grade and section *</label>
+                      <select 
+                        onchange="state.editForm.section = this.value; state.isEditFormDirty = true;"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      >
+                        <option value="7 · Acacia" ${f.section.includes('Acacia') ? 'selected' : ''}>Grade 7 · Acacia</option>
+                        <option value="7 · Narra" ${f.section.includes('Narra') ? 'selected' : ''}>Grade 7 · Narra</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Date of birth *</label>
+                      <input 
+                        type="date" 
+                        value="${f.dob}" 
+                        oninput="state.editForm.dob = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Gender</label>
+                      <select 
+                        onchange="state.editForm.gender = this.value; state.isEditFormDirty = true;"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      >
+                        <option value="Female" ${f.gender === 'Female' ? 'selected' : ''}>Female</option>
+                        <option value="Male" ${f.gender === 'Male' ? 'selected' : ''}>Male</option>
+                      </select>
+                    </div>
+
+                    <div class="col-span-2">
+                      <label class="block font-semibold text-gray-700 mb-1">Enrollment status *</label>
+                      <select 
+                        onchange="state.editForm.status = this.value; state.isEditFormDirty = true;"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      >
+                        <option value="Enrolled" ${f.status === 'Enrolled' ? 'selected' : ''}>Enrolled</option>
+                        <option value="Pending" ${f.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Transferred" ${f.status === 'Transferred' ? 'selected' : ''}>Transferred</option>
+                      </select>
+                    </div>
+
+                    <div class="col-span-2">
+                      <label class="block font-semibold text-gray-700 mb-1">Home address</label>
+                      <input 
+                        type="text" 
+                        value="${f.address || ''}" 
+                        oninput="state.editForm.address = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label class="block font-semibold text-gray-700 mb-1">Last name *</label>
-                  <input type="text" required value="${f.lastName}" oninput="state.editForm.lastName = this.value; state.isEditFormDirty = true;" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal">
+
+                <!-- Guardian Info Panel -->
+                <div class="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
+                  <h3 class="text-sm font-bold text-gray-900 border-b border-gray-200 pb-2">Guardian and contact information</h3>
+                  <p class="text-[11px] text-gray-400">Used for academic updates and student support.</p>
+
+                  <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Parent / guardian name *</label>
+                      <input 
+                        type="text" 
+                        value="${f.parentName || ''}" 
+                        oninput="state.editForm.parentName = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Relationship *</label>
+                      <select 
+                        onchange="state.editForm.relationship = this.value; state.isEditFormDirty = true;"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      >
+                        <option value="Mother" ${f.relationship === 'Mother' ? 'selected' : ''}>Mother</option>
+                        <option value="Father" ${f.relationship === 'Father' ? 'selected' : ''}>Father</option>
+                        <option value="Guardian" ${f.relationship === 'Guardian' ? 'selected' : ''}>Guardian</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Mobile number *</label>
+                      <input 
+                        type="text" 
+                        value="${f.mobile || ''}" 
+                        oninput="state.editForm.mobile = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block font-semibold text-gray-700 mb-1">Email address</label>
+                      <input 
+                        type="email" 
+                        value="${f.email || ''}" 
+                        oninput="state.editForm.email = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      />
+                    </div>
+
+                    <div class="col-span-2">
+                      <label class="block font-semibold text-gray-700 mb-1">Teacher notes</label>
+                      <textarea 
+                        rows="3" 
+                        oninput="state.editForm.teacherNotes = this.value; state.isEditFormDirty = true;" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white"
+                      >${f.teacherNotes || ''}</textarea>
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              <!-- Modal Actions -->
               <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
-                <button type="button" onclick="closeEditStudentModal(true)" class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg text-xs">
+                <button 
+                  type="button" 
+                  onclick="closeEditStudentModal(true)" 
+                  class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg text-xs transition-colors"
+                >
                   Cancel
                 </button>
-                <button type="submit" class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs shadow-sm">
-                  Save Changes
+                <button 
+                  type="submit" 
+                  class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs transition-colors shadow-sm inline-flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-check text-xs"></i>
+                  <span>Save Changes</span>
                 </button>
               </div>
             </form>
@@ -1436,6 +1827,7 @@
       `;
     }
 
+    // Add Student Modal
     function renderAddStudentModal() {
       if (!state.showAddStudentModal) return '';
       const a = state.addForm;
@@ -1446,7 +1838,7 @@
             <div class="flex items-center justify-between pb-4 border-b border-gray-100">
               <div>
                 <h2 class="text-2xl font-bold text-gray-900">Register New Student</h2>
-                <p class="text-xs text-gray-500">Fill in the details to register a student.</p>
+                <p class="text-xs text-gray-500">Fill in the student details to create a new profile.</p>
               </div>
               <button onclick="state.showAddStudentModal = false; render();" class="text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-lg"></i>
@@ -1470,13 +1862,36 @@
                     <option value="7 · Narra">7 · Narra</option>
                   </select>
                 </div>
+                <div>
+                  <label class="block font-semibold text-gray-700 mb-1">Date of Birth</label>
+                  <input type="date" value="${a.dob}" oninput="state.addForm.dob = this.value" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal">
+                </div>
+                <div>
+                  <label class="block font-semibold text-gray-700 mb-1">Gender</label>
+                  <select onchange="state.addForm.gender = this.value" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal bg-white">
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-semibold text-gray-700 mb-1">Parent / Guardian Name</label>
+                  <input type="text" value="${a.parentName}" oninput="state.addForm.parentName = this.value" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal">
+                </div>
+                <div>
+                  <label class="block font-semibold text-gray-700 mb-1">Mobile Number</label>
+                  <input type="text" value="${a.mobile}" oninput="state.addForm.mobile = this.value" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal">
+                </div>
+                <div>
+                  <label class="block font-semibold text-gray-700 mb-1">Email Address</label>
+                  <input type="email" value="${a.email}" oninput="state.addForm.email = this.value" class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-gradify-teal">
+                </div>
               </div>
 
               <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
                 <button type="button" onclick="state.showAddStudentModal = false; render();" class="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg text-xs">
                   Cancel
                 </button>
-                <button type="submit" class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs shadow-sm">
+                <button type="submit" class="px-5 py-2 bg-gradify-teal hover:bg-gradify-teal-dark text-white font-semibold rounded-lg text-xs transition-colors shadow-sm">
                   Register Student
                 </button>
               </div>
@@ -1486,46 +1901,85 @@
       `;
     }
 
+    // Discard Unsaved Changes Dialog (Edit student-1.png)
     function renderDiscardChangesModal() {
       if (!state.showDiscardChangesModal) return '';
 
       return `
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-gray-100">
-            <h3 class="text-xl font-bold text-gray-900">Discard unsaved changes?</h3>
-            <p class="text-xs text-gray-500">Your modifications have not been saved.</p>
+            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-bold text-gray-900">Discard unsaved changes?</h3>
+              <p class="text-xs text-gray-500 mt-2 leading-relaxed">
+                Your edits have not been saved. Keep editing to review them, or discard changes and return to the previous record.
+              </p>
+            </div>
+
             <div class="flex items-center justify-end space-x-3 pt-3">
-              <button onclick="state.showDiscardChangesModal = false; render();" class="px-4 py-2 bg-gradify-teal text-white font-semibold rounded-lg text-xs">Keep editing</button>
-              <button onclick="closeEditStudentModal(false);" class="px-4 py-2 bg-rose-600 text-white font-semibold rounded-lg text-xs">Discard changes</button>
+              <button 
+                onclick="state.showDiscardChangesModal = false; render();" 
+                class="px-4 py-2 bg-gradify-teal text-white font-semibold rounded-lg text-xs hover:bg-gradify-teal-dark transition-colors"
+              >
+                Keep editing
+              </button>
+              <button 
+                onclick="closeEditStudentModal(false);" 
+                class="px-4 py-2 bg-rose-600 text-white font-semibold rounded-lg text-xs hover:bg-rose-700 transition-colors"
+              >
+                Discard changes
+              </button>
             </div>
           </div>
         </div>
       `;
     }
 
+    // Logout Confirmation Modal
     function renderLogoutModal() {
       if (!state.showLogoutModal) return '';
 
       return `
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-gray-100">
-            <h3 class="text-lg font-bold text-gray-900">Confirm Logout</h3>
-            <p class="text-xs text-gray-500">Are you sure you want to end your current session?</p>
+            <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-bold text-gray-900">Confirm Logout</h3>
+              <p class="text-xs text-gray-500 mt-1">Are you sure you want to end your current session?</p>
+            </div>
+
             <div class="flex items-center justify-end space-x-3 pt-2">
-              <button onclick="state.showLogoutModal = false; render();" class="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg text-xs">Cancel</button>
-              <button onclick="handleLogout()" class="px-4 py-2 bg-rose-600 text-white font-semibold rounded-lg text-xs">Logout</button>
+              <button 
+                onclick="state.showLogoutModal = false; render();" 
+                class="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg text-xs hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onclick="handleLogout()" 
+                class="px-4 py-2 bg-rose-600 text-white font-semibold rounded-lg text-xs hover:bg-rose-700 transition-colors shadow-sm"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
       `;
     }
 
+    // Print Report Modal
     function renderPrintReportModal() {
       if (!state.showPrintReportModal) return '';
 
       return `
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 space-y-6">
+          <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8 space-y-6">
             <div class="flex justify-between items-center pb-4 border-b">
               <h2 class="text-lg font-bold text-gray-900">Official Grade Summary Preview</h2>
               <button onclick="state.showPrintReportModal = false; render();" class="text-gray-400 hover:text-gray-600">
@@ -1533,22 +1987,41 @@
               </button>
             </div>
 
-            <div class="border p-6 bg-white space-y-4 text-xs">
-              <h1 class="text-lg font-bold text-center">Quarterly Grade Summary</h1>
-              <table class="w-full text-left border-collapse">
+            <!-- Printable Certificate Style View -->
+            <div id="printableArea" class="border p-8 bg-white space-y-6 text-gray-900 font-sans">
+              <div class="text-center space-y-1">
+                <p class="text-xs uppercase tracking-widest font-bold text-gray-500">Asia Source iCollege – Pasig City Branch</p>
+                <h1 class="text-xl font-black text-gray-900">Quarterly Academic Grade Report</h1>
+                <p class="text-xs text-gray-600">Academic Year 2026–2027 · Quarter 1</p>
+              </div>
+
+              <div class="grid grid-cols-2 text-xs border-y py-3 border-gray-200">
+                <div>
+                  <p><span class="font-bold">Faculty Member:</span> Maria D. Cruz</p>
+                  <p><span class="font-bold">Assigned Grade:</span> Grade 7 (Acacia & Narra)</p>
+                </div>
+                <div class="text-right">
+                  <p><span class="font-bold">Date Generated:</span> October 19, 2026</p>
+                  <p><span class="font-bold">Passing Standard:</span> 75.00 General Average</p>
+                </div>
+              </div>
+
+              <table class="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr class="border-b">
+                  <tr class="border-b-2 border-gray-300">
                     <th class="py-2">Student Name</th>
                     <th class="py-2">Section</th>
                     <th class="py-2 text-center">General Avg</th>
+                    <th class="py-2 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                   ${state.students.map(s => `
-                    <tr class="border-b">
+                    <tr>
                       <td class="py-2 font-bold">${s.firstName} ${s.lastName}</td>
                       <td class="py-2">${s.section}</td>
-                      <td class="py-2 text-center">${calcAverage(s.grades)}</td>
+                      <td class="py-2 text-center font-bold">${calcAverage(s.grades)}</td>
+                      <td class="py-2 text-right">${isPassing(calcAverage(s.grades)) ? 'PASSED' : 'FAILED'}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -1556,25 +2029,36 @@
             </div>
 
             <div class="flex justify-end space-x-3">
-              <button onclick="state.showPrintReportModal = false; render();" class="px-4 py-2 border text-xs font-semibold rounded-lg">Close</button>
-              <button onclick="window.print();" class="px-5 py-2 bg-gradify-teal text-white text-xs font-semibold rounded-lg">Print</button>
+              <button 
+                onclick="state.showPrintReportModal = false; render();" 
+                class="px-4 py-2 border text-xs font-semibold rounded-lg hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <button 
+                onclick="window.print();" 
+                class="px-5 py-2 bg-gradify-teal text-white text-xs font-semibold rounded-lg hover:bg-gradify-teal-dark"
+              >
+                <i class="fa-solid fa-print mr-1"></i> Print / Save as PDF
+              </button>
             </div>
           </div>
         </div>
       `;
     }
 
+    // Toast Banner Component
     function renderToast() {
       if (!state.toastMessage) return '';
       return `
-        <div class="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-3">
+        <div class="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-3 transition-all animate-bounce">
           <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
           <span>${state.toastMessage}</span>
         </div>
       `;
     }
 
-    // Main App Render
+    // --- MAIN RENDER FUNCTION ---
     function render() {
       const app = document.getElementById('app');
 
@@ -1620,7 +2104,7 @@
       `;
     }
 
-    // Initial render on load
+    // Initialize Application
     window.onload = function() {
       render();
     };
